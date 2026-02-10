@@ -5,6 +5,12 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
+import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
+import '@/global.css';
+import { SafeAreaListener } from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Uniwind } from 'uniwind';
+
 export const unstable_settings = {
   anchor: '(tabs)',
 };
@@ -13,12 +19,24 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    
+    <SafeAreaListener
+      onChange={({ insets }) => {
+        Uniwind.updateInsets(insets);
+      }}
+    >
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <GluestackUIProvider mode="dark">
+          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
+        </GluestackUIProvider>
+      </GestureHandlerRootView>
+    </SafeAreaListener>
+  
   );
 }
